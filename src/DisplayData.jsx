@@ -38,6 +38,13 @@ const CREATE_USER_MUTATION = gql`
         }
     }
 `
+const DELETE_USER_MUTATION = gql`
+    mutation ($id: ID!){
+        deleteUser(id: $id){
+            id
+        }
+    }
+`
 
 function DisplayData() {
     
@@ -46,6 +53,7 @@ function DisplayData() {
     const [movieSearched, setMovieSearched] = useState('')
     const [fetchMovie, { data: movieSearchedData, error: movieError }] = useLazyQuery(QUERY_MOVIE)
     const [createUser] = useMutation(CREATE_USER_MUTATION)
+    const [handleDelete] = useMutation(DELETE_USER_MUTATION)
     
     // create user state
     const [name, setName] = useState("");
@@ -98,6 +106,18 @@ function DisplayData() {
                   <h4>Username: {user.username}</h4>
                   <h4>Age: {user.age}</h4>
                   <h4>Nationality: {user.nationality}</h4>
+                  <button onClick={() => {
+                      handleDelete({
+                          variables: {
+                              id: user.id
+                          },
+                          refetchQueries: [
+                              {
+                                  query: QUERY_ALL_USERS
+                              }
+                          ]
+                      })
+                  }}>Delete</button>
               </div>)
           }
 
